@@ -1,7 +1,11 @@
 addEventListener('load', function() {
     document.getElementById('play').addEventListener('click', 
     function(){
-        alert("Comença la partida");
+        //alert("Comença la partida");
+		const alies = prompt("Introdueix el teu àlies de jugador:");
+		if (alies != null) {
+			console.log("L'àlies del jugador és: " + alies);
+		}
     });
 
     document.getElementById('options').addEventListener('click', 
