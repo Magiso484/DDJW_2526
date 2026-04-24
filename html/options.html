@@ -5,22 +5,35 @@
 		<title> Memory - Opcions </title>
 	</head>
 	<body>
-		<h1>Opcions</h1>
-        <label for="pairs">Número de cartes</label>
-        <input type="number" id="pairs" value="2" min="2" max="6">
-		<label for="group">Mida del grup</label>
-        <select id="group">
-            <option value="2" selected>Parelles</option>
-            <option value="3">Trios</option>
-            <option value="4">Quartets</option>
-        </select>
-        <label for="dif">Dificultat</label>
-        <select id="dif">
-            <option value="easy">Baixa</option>
-            <option value="normal" selected>Normal</option>
-            <option value="hard">Alta</option>
-        </select>
-        <button id="default">Per defecte</button>
-        <button id="apply">Aplicar</button>
+		<h1 id="title-options">Opcions</h1>
+		
+		<div id="opts-mode1">
+			<label for="pairs">Parelles úniques</label>
+			<input type="number" id="pairs" value="2" min="2" max="6">
+			
+			<label for="dif">Dificultat</label>
+			<select id="dif">
+				<option value="easy">Baixa</option>
+				<option value="normal" selected>Normal</option>
+				<option value="hard">Alta</option>
+			</select>
+		</div>
+		
+		<div id="opts-mode2">
+			<label for="start-level">Nivell inicial (Mode 2):</label>
+			<input type="number" id="start-level" value="1" min="1" max="10">
+		</div>
+		
+		<div id="opts-common">
+			<label for="group">Mida del grup</label>
+			<select id="group">
+				<option value="2" selected>Parelles</option>
+				<option value="3">Trios</option>
+				<option value="4">Quartets</option>
+			</select>
+		</div>
+		
+        <button id="default" class="center">Per defecte</button>
+        <button id="apply" class="center">Aplicar</button>
 	</body>
 </html>

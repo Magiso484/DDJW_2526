@@ -1,62 +1,66 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
 
-var options = function(){
+var optionsManager = function(){
     const default_options = {
         pairs: 2, // No sempre seràn pairs ara
         difficulty: 'normal',
-		groupSize: 2
+		groupSize: 2,
+		startLevel: 1
     } 
+	
+	var gameMode = sessionStorage.getItem('gameMode') || 'mode1';
 
     var pairs = $('#pairs');
     var difficulty = $('#dif');
 	var group = $('#group');
+	var startLevel = $('#start-level');
     
-    var savedOptions = localStorage.options && JSON.parse(localStorage.options);
-    var options = Object.create(default_options);
-
-    if (savedOptions && savedOptions.pairs)
-        options.pairs = savedOptions.pairs;
-    if (savedOptions && savedOptions.difficulty)
-        options.difficulty = savedOptions.difficulty;
-	if (savedOptions && savedOptions.groupSize)
-        options.groupSize = savedOptions.groupSize;
-
-    pairs.val(options.pairs);
-    difficulty.val(options.difficulty);
-	group.val(options.groupSize);
-
-    pairs.on('change', function (){
-        options.pairs = pairs.val();
-    });
-
-    difficulty.on('change', function (){
-        options.difficulty = difficulty.val();
-    });
+	if(gameMode == 'mode2'){
+		$('#opts-mode1').hide();
+		$('#opts-mode2').show();
+		$('#title-options').text('Opcions - Mode Infinit');
+	}
+	else {
+		$('#opts-mode2').hide();
+		$('#opts-mode1').show();
+		$('#title-options').text('Opcions - Mode Estàndard');
+	}	
 	
-	group.on('change', function (){
-        options.groupSize = parseInt(group.val());
-    });
+    var savedOptions = localStorage.options && JSON.parse(localStorage.options);
+    var currentOptions = Object.assign({}, default_options, savedOptions);
+
+    pairs.val(currentOptions.pairs);
+    difficulty.val(currentOptions.difficulty);
+	group.val(currentOptions.groupSize);
+	startLevel.val(currentOptions.startLevel);
+
+    pairs.on('change', () => currentOptions.pairs = parseInt(pairs.val()));
+
+    difficulty.on('change', () => currentOptions.difficulty = difficulty.val());
+	
+	group.on('change', () => currentOptions.groupSize = parseInt(group.val()));
+	
+	startLevel.on('change', () => currentOptions.startLevel = parseInt(startLevel.val()));
 
     return {
         applyChanges: function(){
-            localStorage.options = JSON.stringify(options);
+            localStorage.options = JSON.stringify(currentOptions);
         },
         defaultValues: function(){
-            options.pairs = default_options.pairs;
-            options.difficulty = default_options.difficulty;
-			options.groupSize = default_options.groupSize;
-            pairs.val(options.pairs);
-            difficulty.val(options.difficulty);
-			group.val(options.groupSize);
+            Object.assign(currentOptions, default_options);
+            pairs.val(currentOptions.pairs);
+            difficulty.val(currentOptions.difficulty);
+			group.val(currentOptions.groupSize);
+			startLevel.val(currentOptions.startLevel);
         }
     }
 }();
 
 $('#default').on('click', function(){
-    options.defaultValues();
+    optionsManager.defaultValues();
 })
 
 $('#apply').on('click', function(){
-    options.applyChanges();
+    optionsManager.applyChanges();
     location.assign("../");
 });
