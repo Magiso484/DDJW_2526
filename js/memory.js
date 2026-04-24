@@ -5,11 +5,28 @@ let flippedCards = [];
 let groupSize = 2; 
 let lockBoard = false;
 
+let timeInitialShow = 2000;
+let timeErrorHide = 1000;
+
 export function selectCards() { 
     let options = JSON.parse(localStorage.options || '{"pairs":2, "difficulty":"normal", "groupSize":2}');
     let numDistinctCards = parseInt(options.pairs) || 2;
     groupSize = parseInt(options.groupSize) || 2;
-
+	
+	let difficulty = options.difficulty || 'normal';
+	if (difficulty === 'easy') {
+		timeInitialShow = 3000;
+		timeErrorHide = 1500;
+	}
+	else if (difficulty === 'hard') {
+		timeInitialShow = 1000;
+		timeErrorHide = 500;
+	}
+	else{
+		timeInitialShow = 2000;
+		timeErrorHide = 1000;
+	}
+	
     const availableCards = [
         "../resources/cb.png", "../resources/co.png", 
         "../resources/sb.png", "../resources/so.png", 
@@ -48,7 +65,7 @@ export function startGame() {
             cardsState[indx] = 0;
         });
         lockBoard = false;
-    }, 1250);
+    }, timeInitialShow);
 }
 
 export function clickCard(indx){
@@ -67,7 +84,7 @@ export function clickCard(indx){
             });
             flippedCards = [];
             lockBoard = false;
-        }, 1000);
+        }, timeErrorHide);
         return;
     }
 	
