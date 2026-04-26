@@ -8,24 +8,42 @@ let lockBoard = false;
 let timeInitialShow = 2000;
 let timeErrorHide = 1000;
 
+export let currentLevel = 1;
+export let currentScore = 0;
+let gameMode = 'mode1';
+
 export function selectCards() { 
-    let options = JSON.parse(localStorage.options || '{"pairs":2, "difficulty":"normal", "groupSize":2}');
-    let numDistinctCards = parseInt(options.pairs) || 2;
-    groupSize = parseInt(options.groupSize) || 2;
+	gameMode = sessionStorage.getItem('gameMode') || 'mode1';
+    let options = JSON.parse(localStorage.options || '{"pairs":2, "difficulty":"normal", "groupSize":2, "startLevel":1}');
+    let numDistinctCards = 2;
+    //groupSize = parseInt(options.groupSize) || 2;
 	
-	let difficulty = options.difficulty || 'normal';
-	if (difficulty === 'easy') {
-		timeInitialShow = 3000;
-		timeErrorHide = 1500;
+	if (gameMode === 'mode2'){
+		currentLevel = parseInt(sessionStorage.getItem('currentLevel')) || parseInt(options.startLevel) || 1;
+		currentScore = parseInt(sessionStorage.getItem('currentScore')) || 0;
+		numDistinctCards = Math.min(2 + Math.floor((currentLevel-1)/2), 6);
+		groupSize = 2 + Math.floor((currentLevel-1)/3);
+		timeInitialShow = Math.max(2000 - ((currentLevel-1)*200), 250);
+		timeErrorHide = Math.max(1000 - ((currentLevel-1)*100), 150);
+		updateTitle();
 	}
-	else if (difficulty === 'hard') {
-		timeInitialShow = 1000;
-		timeErrorHide = 500;
-	}
-	else{
-		timeInitialShow = 2000;
-		timeErrorHide = 1000;
-	}
+	else {
+		currentLevel=1;
+		currentScore=0;
+		numDistinctCards = parseInt(options.pairs) || 2;
+		groupSize = parseInt(options.groupSize) || 2;
+		let difficulty = options.difficulty || 'normal';
+		if(difficulty === 'easy') {
+			timeInitialShow = 3000; timeErrorHide = 1500;
+        } else if (difficulty === 'hard') {
+            timeInitialShow = 500; timeErrorHide = 500;
+        } else {
+            timeInitialShow = 2000; timeErrorHide = 1000;
+        }
+        
+        const titleElement = document.getElementById('title');
+        if(titleElement) titleElement.innerText = `Mode Estàndard`;
+    }	
 	
     const availableCards = [
         "../resources/cb.png", "../resources/co.png", 
@@ -77,6 +95,10 @@ export function clickCard(indx){
     let firstCard = gameItems[flippedCards[0]];
     if (gameItems[indx] !== firstCard) {
         lockBoard = true;
+		if (gameMode === 'mode2') {
+			currentScore = Math.max(0, currentScore-(currentLevel*5));
+			sessionStorage.setItem('currentScore', currentScore);
+		
         setTimeout(() => {
             flippedCards.forEach(i => {
                 cardsState[i] = 0;
@@ -86,16 +108,42 @@ export function clickCard(indx){
             lockBoard = false;
         }, timeErrorHide);
         return;
+		}
     }
 	
     if (flippedCards.length === groupSize) {
         flippedCards.forEach(i => cardsState[i] = 2);
         flippedCards = [];
+		
+		if (gameMode==='mode2'){
+			currentScore += (currentLevel*50);
+			sessionStorage.setItem('currentScore', currentScore);
+			updateTitle();
+		}
+		
         if (cardsState.every(state => state === 2)) {
-            setTimeout(() => {
-                alert("Felicitats! Has completat el nivell!");
-            }, 300);
+			if (gameMode==='mode2'){
+				currentScore += (currentLevel*50);
+				sessionStorage.setItem('currentScore', currentScore);
+				sessionStorage.setItem('currentLevel', currentLevel+1);
+				setTimeout(() => {
+					alert(`Nivell ${currentLevel} completat! Puntuació total: ${currentScore}`);
+					location.reload();
+				}, 500);
+			}
+			else {
+				setTimeout(() => {
+					alert("Felicitats! Has completat el nivell!");
+				}, 300);
+			}
         }
+    }
+}
+
+function updateTitle() {
+    const titleElement = document.getElementById('title');
+    if (titleElement && gameMode === 'mode2') {
+        titleElement.innerText = `Mode Infinit - Nivell ${currentLevel} | Punts: ${currentScore}`;
     }
 }
 

@@ -10,20 +10,14 @@ addEventListener('load', function() {
 	}
 	
     document.getElementById('play').addEventListener('click', function() {
-        const alies = prompt("Introdueix el teu àlies de jugador:");
-        if (alies != null && alies.trim() !== "") {
-            sessionStorage.setItem('alies', alies);          
-            mainMenu.classList.add('hidden');
-            modeSelection.classList.remove('hidden');
-			
-			if(!sessionStorage.getItem('gameMode')){
-				sessionStorage.getItem('gameMode', 'mode1');
-			}
-			
-			clearModeSelection();
-			if(sessionStorage.getItem('gameMode') === 'mode1') btnMode1.classList.add('selected');
-			else btnMode2.classList.add('selected');
+        mainMenu.classList.add('hidden');
+        modeSelection.classList.remove('hidden');
+        if(!sessionStorage.getItem('gameMode')) {
+            sessionStorage.setItem('gameMode', 'mode1');
         }
+        clearModeSelection();
+        if(sessionStorage.getItem('gameMode') === 'mode1') btnMode1.classList.add('selected');
+        else btnMode2.classList.add('selected');
     });
 
 	btnMode1.addEventListener('click', function() {
@@ -41,8 +35,17 @@ addEventListener('load', function() {
     });
 	
 	document.getElementById('start-game').addEventListener('click', function() {
-        sessionStorage.removeItem('load');
-        window.location.assign("./html/game.html");
+        const alies = prompt("Introdueix el teu àlies de jugador per començar:");
+        
+        if (alies != null && alies.trim() !== "") {
+            sessionStorage.setItem('alies', alies);
+            sessionStorage.removeItem('load');
+			sessionStorage.removeItem('currentLevel');
+			sessionStorage.removeItem('currentScore');
+            window.location.assign("./html/game.html");
+        } else if (alies != null) {
+            alert("Has d'introduir un nom per poder jugar.");
+        }
     });
 	
     document.getElementById('back-menu').addEventListener('click', function() {
