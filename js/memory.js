@@ -15,6 +15,24 @@ let gameMode = 'mode1';
 export function selectCards() { 
 	gameMode = sessionStorage.getItem('gameMode') || 'mode1';
     let options = JSON.parse(localStorage.options || '{"pairs":2, "difficulty":"normal", "groupSize":2, "startLevel":1}');
+	
+	let loadedData = sessionStorage.getItem('load');
+	if(loadedData){
+		let data = JSON.parse(loadedData);
+		gameItems = data.gameItems;
+		cardsState = data.cardsState;
+        groupSize = data.groupSize;
+        gameMode = data.gameMode;
+        currentLevel = data.currentLevel;
+        currentScore = data.currentScore;
+		
+		sessionStorage.removeItem('load');
+		if(gameMode==='mode2') updateTitle();
+		flippedCards = [];
+		lockBoard = false;
+		return;
+	}	
+	
     let numDistinctCards = 2;
     //groupSize = parseInt(options.groupSize) || 2;
 	
@@ -98,7 +116,7 @@ export function clickCard(indx){
 		if (gameMode === 'mode2') {
 			currentScore = Math.max(0, currentScore-(currentLevel*5));
 			sessionStorage.setItem('currentScore', currentScore);
-		
+		}
         setTimeout(() => {
             flippedCards.forEach(i => {
                 cardsState[i] = 0;
@@ -108,7 +126,7 @@ export function clickCard(indx){
             lockBoard = false;
         }, timeErrorHide);
         return;
-		}
+		
     }
 	
     if (flippedCards.length === groupSize) {
@@ -163,5 +181,23 @@ export function registerFinalScore() {
 }
 
 export function saveGame(){
-    console.log("S'ha demanat guardar la partida. Estat actual:", {gameItems, cardsState});
+    const saveData = {
+        gameItems: gameItems,
+        cardsState: cardsState,
+        groupSize: groupSize,
+        gameMode: gameMode,
+        currentLevel: currentLevel,
+        currentScore: currentScore,
+        date: new Date().toLocaleString(),
+        alies: sessionStorage.getItem('alies') || 'Anònim'
+    };
+    let allSaves = JSON.parse(localStorage.getItem('memory_saves') || '[]');
+    let existingIdx = allSaves.findIndex(s => s.alies === saveData.alies && s.gameMode === saveData.gameMode);
+    if (existingIdx !== -1) {
+        allSaves[existingIdx] = saveData;
+    } else {
+        allSaves.push(saveData);
+    }
+    localStorage.setItem('memory_saves', JSON.stringify(allSaves));
+    alert("Partida guardada correctament!");
 }

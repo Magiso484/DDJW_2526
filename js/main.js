@@ -64,25 +64,23 @@ addEventListener('load', function() {
 
     document.getElementById('saves').addEventListener('click', 
     function(){
-        let to_load = localStorage.save;
-        fetch('../php/load.php', {
-            method: "POST",
-            body: JSON.stringify({}),
-            headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        .then(response => response.json())
-        .then(json => to_load = (!json.error)?JSON.stringify(json.save): localStorage.save)
-        .catch (err => {
-            console.error(err);
-            console.warn("La partida s'intentarà carregar de local");
-        });
-
-        if (!to_load) {
-            alert("No hi ha cap partida a carregar");
+        let allSaves = JSON.parse(localStorage.getItem('memory_saves') || '[]');
+        if (allSaves.length === 0) {
+            alert("No hi ha cap partida guardada en aquest navegador.");
             return;
         }
-        sessionStorage.load = to_load;
-        window.location.assign("./html/game.html");
+        let message = "Tria el número de la partida que vols carregar:\n";
+        allSaves.forEach((s, idx) => {
+            message += `${idx + 1}. ${s.alies} - ${s.gameMode} (Nivell ${s.currentLevel}) - ${s.date}\n`;
+        });
+        let choice = prompt(message);
+        let idx = parseInt(choice) - 1;
+        if (allSaves[idx]) {
+            sessionStorage.setItem('load', JSON.stringify(allSaves[idx]));
+            sessionStorage.setItem('gameMode', allSaves[idx].gameMode);
+            sessionStorage.setItem('alies', allSaves[idx].alies);
+            window.location.assign("./html/game.html");
+        }
     });
 
     document.getElementById('exit').addEventListener('click', 
