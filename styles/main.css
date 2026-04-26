@@ -85,3 +85,20 @@ body{
 #start-game:hover {
 	background-color: #27ae60;
 }
+
+#save, #finish {
+    display: inline-block;
+    width: 12rem;
+    height: 3rem;
+    margin: 10px;
+    cursor: pointer;
+}
+
+#finish {
+    background-color: #c0392b; /* Vermell per indicar finalització */
+    color: white;
+}
+
+#finish:hover {
+    background-color: #e74c3c;
+}

@@ -59,7 +59,7 @@ addEventListener('load', function() {
     });
 
 	document.getElementById('scores').addEventListener('click', function() {
-        console.log("S'ha clicat el botó de Puntuacions. S'implementarà en el futur.");
+        window.location.assign("./html/scores.html");
     });
 
     document.getElementById('saves').addEventListener('click', 

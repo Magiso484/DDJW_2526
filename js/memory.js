@@ -147,6 +147,21 @@ function updateTitle() {
     }
 }
 
+export function registerFinalScore() {
+    const alies = sessionStorage.getItem('alies') || 'Anònim';
+    const score = parseInt(sessionStorage.getItem('currentScore')) || 0;
+    if (score === 0) return;
+    let ranking = JSON.parse(localStorage.getItem('ranking') || '[]');
+    ranking.push({ name: alies, points: score });
+    ranking.sort((a, b) => b.points - a.points);
+    ranking = ranking.slice(0, 10);
+
+    localStorage.setItem('ranking', JSON.stringify(ranking));
+	sessionStorage.removeItem('currentLevel');
+	sessionStorage.removeItem('currentScore');
+    console.log("Puntuació registrada al rànquing.");
+}
+
 export function saveGame(){
     console.log("S'ha demanat guardar la partida. Estat actual:", {gameItems, cardsState});
 }

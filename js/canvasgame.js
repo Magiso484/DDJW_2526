@@ -1,5 +1,5 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
-import {clickCard, gameItems, selectCards, startGame, initCard, saveGame} from "./memory.js";
+import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, registerFinalScore} from "./memory.js";
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
@@ -113,3 +113,9 @@ function checkInput(){
     e_click.click = key = false;
 }
 
+$('#save').on('click', ()=>saveGame());
+
+$('#finish').on('click', () => {
+	registerFinalScore();
+	window.location.assign("../index.html");
+});
