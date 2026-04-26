@@ -1,5 +1,5 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
-import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, registerFinalScore} from "./memory.js";
+import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, registerFinalScore, defaultBackCard} from "./memory.js";
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
@@ -21,7 +21,7 @@ if (canvas){
 function start(){
     selectCards();
     cards = gameItems.map((c)=>{return {texture:c}});
-    loadCardResource("../resources/back.png");
+    loadCardResource(defaultBackCard);
     cards.forEach((card, indx) => {
         loadCardResource(card.texture);
         initCard(val => card.texture = val);

@@ -12,6 +12,28 @@ export let currentLevel = 1;
 export let currentScore = 0;
 let gameMode = 'mode1';
 
+function getCardSVG(type) {
+    const colors = { b: "#0096ff", o: "#ff6600" };
+    const base = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 128" width="96" height="128">`;
+    const border = `<rect x="4" y="4" width="88" height="120" fill="white" stroke="black" stroke-width="8"/>`;
+    let shape = "";
+
+    if (type === "back") {
+        return `data:image/svg+xml;utf8,${encodeURIComponent(base + `<rect x="4" y="4" width="88" height="120" fill="#0096ff" stroke="black" stroke-width="8"/></svg>`)}`;
+    }
+
+    const color = colors[type[1]];
+    if (type[0] === 'c') {
+        shape = `<circle cx="48" cy="64" r="30" fill="${color}" stroke="black" stroke-width="4"/>`;
+    } else if (type[0] === 's') {
+        shape = `<rect x="23" y="39" width="50" height="50" fill="${color}" stroke="black" stroke-width="4"/>`;
+    } else if (type[0] === 't') {
+        shape = `<polygon points="48,30 78,88 18,88" fill="${color}" stroke="black" stroke-width="4"/>`;
+    }
+    return `data:image/svg+xml;utf8,${encodeURIComponent(base + border + shape + "</svg>")}`;
+}
+export const defaultBackCard = getCardSVG("back");
+
 export function selectCards() { 
 	gameMode = sessionStorage.getItem('gameMode') || 'mode1';
     let options = JSON.parse(localStorage.options || '{"pairs":2, "difficulty":"normal", "groupSize":2, "startLevel":1}');
@@ -64,9 +86,9 @@ export function selectCards() {
     }	
 	
     const availableCards = [
-        "../resources/cb.png", "../resources/co.png", 
-        "../resources/sb.png", "../resources/so.png", 
-        "../resources/tb.png", "../resources/to.png"
+        getCardSVG("cb"), getCardSVG("co"), 
+        getCardSVG("sb"), getCardSVG("so"), 
+        getCardSVG("tb"), getCardSVG("to")
     ];
     
     let selected = availableCards.slice(0, numDistinctCards);
@@ -97,7 +119,7 @@ export function startGame() {
 
     setTimeout(() => {
         setValues.forEach((callback, indx) => {
-            callback("../resources/back.png");
+            callback(defaultBackCard);
             cardsState[indx] = 0;
         });
         lockBoard = false;
@@ -120,7 +142,7 @@ export function clickCard(indx){
         setTimeout(() => {
             flippedCards.forEach(i => {
                 cardsState[i] = 0;
-                setValues[i]("../resources/back.png");
+                setValues[i](defaultBackCard);
             });
             flippedCards = [];
             lockBoard = false;
